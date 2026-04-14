@@ -94,7 +94,7 @@ with col1:
     default_link = "https://aimix-self-loading-mixer.netlify.app/" if brand == "AIMIX" else "https://tatsuosales-id.netlify.app/#/"
     default_model = "SELF LOADING MIXER" if brand == "AIMIX" else "WHEEL CRAWLER EXCAVATOR JP80-9"
 
-    # INIT SESSION STATE UNTUK KOTAK MERAH (Agar UI Reactive saat ditarik AI)
+    # INIT SESSION STATE (Nilai Bawaan)
     defaults = {
         'tipe_unit': default_model, 'headline': "TANGGUH DISEGALA MEDAN",
         'engine': "Yanmar 4TNV98", 'hydraulic': "Rexroth", 'bobot': "9600kg",
@@ -110,19 +110,34 @@ with col1:
     
     st.markdown("---")
     
-    # 🔴 AREA KOTAK MERAH (Terhubung langsung ke Session State)
-    model = st.text_input("Tipe Unit", key='tipe_unit')
-    headline = st.text_input("Headline Utama", key='headline')
+    # 🔴 AREA KOTAK MERAH: MANUAL STATE SYNC (Bypass Streamlit Error)
+    # Kita menggunakan `value=` alih-alih `key=` agar AI bisa menimpa data kapan saja tanpa crash.
+    
+    model = st.text_input("Tipe Unit", value=st.session_state['tipe_unit'])
+    st.session_state['tipe_unit'] = model
+    
+    headline = st.text_input("Headline Utama", value=st.session_state['headline'])
+    st.session_state['headline'] = headline
     
     c_sp1, c_sp2, c_sp3 = st.columns(3)
-    spec_engine = c_sp1.text_input("Engine / Power", key='engine')
-    spec_cap = c_sp2.text_input("Hydraulic Sys", key='hydraulic')
-    spec_weight = c_sp3.text_input("Bobot Unit", key='bobot')
+    spec_engine = c_sp1.text_input("Engine / Power", value=st.session_state['engine'])
+    st.session_state['engine'] = spec_engine
+    
+    spec_cap = c_sp2.text_input("Hydraulic Sys", value=st.session_state['hydraulic'])
+    st.session_state['hydraulic'] = spec_cap
+    
+    spec_weight = c_sp3.text_input("Bobot Unit", value=st.session_state['bobot'])
+    st.session_state['bobot'] = spec_weight
 
     b_col1, b_col2, b_col3 = st.columns(3)
-    badge1 = b_col1.text_input("Badge 1", key='badge1')
-    badge2 = b_col2.text_input("Badge 2", key='badge2')
-    badge3 = b_col3.text_input("Badge 3", key='badge3')
+    badge1 = b_col1.text_input("Badge 1", value=st.session_state['badge1'])
+    st.session_state['badge1'] = badge1
+    
+    badge2 = b_col2.text_input("Badge 2", value=st.session_state['badge2'])
+    st.session_state['badge2'] = badge2
+    
+    badge3 = b_col3.text_input("Badge 3", value=st.session_state['badge3'])
+    st.session_state['badge3'] = badge3
 
 with col2:
     st.subheader("2. AI Omni-Extractor & Database")
@@ -188,14 +203,14 @@ with col2:
                         llm = genai.GenerativeModel(m, generation_config={"response_mime_type": "application/json"})
                         response = llm.generate_content(prompt)
                         ai_json_data = json.loads(response.text)
-                        break # Jika berhasil, keluar dari loop
+                        break # Berhasil! Keluar dari loop pencarian
                     except Exception as e:
-                        continue # Silently try next model
+                        continue # Gagal? Lanjut ke model berikutnya dalam diam
                 
                 if not ai_json_data:
                     st.error("⚠️ Semua lapis model AI (2.5 -> 3 -> latest) gagal merespons. Periksa API Key / Koneksi Anda.")
                 else:
-                    # Inject data AI ke Session State agar UI otomatis berubah
+                    # Menimpa Session State dengan Data AI yang baru
                     st.session_state['tipe_unit'] = ai_json_data.get('tipe_unit', st.session_state['tipe_unit']).upper()
                     st.session_state['headline'] = ai_json_data.get('headline', st.session_state['headline']).upper()
                     st.session_state['engine'] = ai_json_data.get('engine', st.session_state['engine'])
@@ -205,13 +220,12 @@ with col2:
                     st.session_state['badge2'] = ai_json_data.get('badge2', st.session_state['badge2']).upper()
                     st.session_state['badge3'] = ai_json_data.get('badge3', st.session_state['badge3']).upper()
                     
-                    # Rangkai Copywriting
                     text_output = ""
                     for item in ai_json_data.get('copywriting', []):
                         text_output += f"{item.get('judul', 'Fitur')} | {item.get('deskripsi', 'Deskripsi')}\n"
                     st.session_state['ai_copywriting'] = text_output.strip()
                     
-                    # Paksa aplikasi me-reload agar kotak merah menampilkan data baru
+                    # Memaksa UI untuk memuat ulang layar agar Kotak Merah terisi angka baru
                     st.rerun()
 
     final_copy = st.text_area("Hasil Copywriting (Format: JUDUL | Deskripsi)", st.session_state['ai_copywriting'], height=150)
@@ -273,7 +287,7 @@ if st.button("🌟 RENDER ULTIMATE BROCHURE", use_container_width=True, type="pr
                 temp_files_to_clean.append(hero_temp.name)
                 pdf.image(hero_temp.name, x=42, y=20, w=125)
                 
-                # 4. TYPOGRAPHY & SPECS (Mengambil dari UI Statis yang sudah di-fill)
+                # 4. TYPOGRAPHY & SPECS (Tarik langsung dari UI yang terlihat)
                 pdf.set_y(125)
                 pdf.set_font('helvetica', 'B', 18) 
                 pdf.set_text_color(20, 20, 20)
