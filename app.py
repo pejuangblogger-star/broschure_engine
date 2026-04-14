@@ -78,7 +78,7 @@ class ProBrochure(FPDF):
         self.cell(0, 6, f'{self.brand_name.upper()} - SMART EQUIPMENT FOR SMART BUILDERS', align='C', ln=True)
         self.set_font('helvetica', 'I', 8)
         clean_link = self.website_link.replace("https://", "").replace("http://", "").rstrip("/")
-        self.cell(0, 4, f'Authorized Representative | {clean_link}', align='C', ln=True)
+        self.cell(0, 4, f'Authorized Representative by Adjie Agung | {clean_link}', align='C', ln=True)
 
 
 # --- UI DASHBOARD & SESSION STATE INIT ---
@@ -157,7 +157,7 @@ with col2:
     else:
         pdf_path_to_read = os.path.join(CATALOG_DIR, pilihan_katalog)
         
-    wa_num = st.text_input("Nomor WhatsApp", "6281230857759")
+    wa_num = st.text_input("Nomor WhatsApp", "+6281230857759")
     
     # --- STRATEGI AUTO-SWITCH & OMNI-EXTRACTION ---
     if st.button("✨ Tarik Data & Auto-Fill Brosur (AI Engine)", type="primary"):
@@ -180,13 +180,13 @@ with col2:
                   "hydraulic": "Tipe Hidrolik",
                   "bobot": "Berat operasional (misal: 6 Ton)",
                   "badge1": "Keunggulan 1 singkat (misal: GARANSI MESIN)",
-                  "badge2": "Keunggulan 2 singkat (misal: MUDAH DIRAWAT)",
+                  "badge2": "Keunggulan 2 singkat (misal: MUDAH PERAWATAN)",
                   "badge3": "Keunggulan 3 singkat (misal: IRIT BBM)",
                   "copywriting": [
-                    {{"judul": "FITUR 1", "deskripsi": "Penjelasan fitur maksimal 2 kalimat."}},
-                    {{"judul": "FITUR 2", "deskripsi": "Penjelasan fitur maksimal 2 kalimat."}},
-                    {{"judul": "FITUR 3", "deskripsi": "Penjelasan fitur maksimal 2 kalimat."}},
-                    {{"judul": "FITUR 4", "deskripsi": "Penjelasan fitur maksimal 2 kalimat."}}
+                    {{"judul": "FITUR 1", "deskripsi": "Penjelasan fitur maksimal 3 kalimat."}},
+                    {{"judul": "FITUR 2", "deskripsi": "Penjelasan fitur maksimal 3 kalimat."}},
+                    {{"judul": "FITUR 3", "deskripsi": "Penjelasan fitur maksimal 3 kalimat."}},
+                    {{"judul": "FITUR 4", "deskripsi": "Penjelasan fitur maksimal 3 kalimat."}}
                   ]
                 }}
                 
