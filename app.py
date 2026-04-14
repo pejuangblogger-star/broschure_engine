@@ -334,16 +334,31 @@ if st.button("🌟 RENDER ULTIMATE BROCHURE", use_container_width=True, type="pr
                         pdf.multi_cell(0, 5, deskripsi.strip())
                         pdf.ln(3)
 
-                # 7. FOOTER WA
-                safe_y = max(pdf.get_y() + 5, 245) 
+                # 7. FOOTER WA (DIJAMIN SEJAJAR 1 BARIS TANPA PINDAH HALAMAN)
+                # Ambil posisi Y terakhir dari teks AI, beri jarak 8 point ke bawah
+                safe_y = pdf.get_y() + 8 
+                
+                # Kunci koordinat ke posisi tersebut
                 pdf.set_xy(10, safe_y)
+                
+                # --- KOMPONEN KIRI: Teks "Hubungi Sales" ---
+                teks_sales = "HUBUNGI SALES KAMI: "
                 pdf.set_font('helvetica', 'B', 12)
                 pdf.set_text_color(20, 20, 20)
-                pdf.cell(50, 6, "HUBUNGI SALES KAMI:", ln=True)
+                
+                # Kalkulasi lebar teks agar presisi
+                lebar_prefix = pdf.get_string_width(teks_sales)
+                
+                # KUNCI UTAMA: ln=0 (Menahan posisi FPDF agar tidak tekan "Enter" ke bawah)
+                pdf.cell(lebar_prefix, 8, teks_sales, ln=0) 
+                
+                # --- KOMPONEN KANAN: Nomor WA (Klikable & Sejajar) ---
                 pdf.set_font('helvetica', 'B', 16)
                 pdf.set_text_color(*b_color)
                 wa_clean = ''.join(filter(str.isdigit, wa_num))
-                pdf.cell(50, 8, f"WhatsApp: +{wa_clean}", link=f"https://wa.me/{wa_clean}", ln=True)
+                
+                # ln=1 (Menutup baris)
+                pdf.cell(0, 8, f"WhatsApp: +{wa_clean}", link=f"https://wa.me/{wa_clean}", ln=1)
 
                 # --- EXPORT ---
                 pdf_bytes = bytes(pdf.output(dest='S'))
