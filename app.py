@@ -177,24 +177,28 @@ with col2:
                 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
                 
                 prompt = f"""
-                Anda adalah Insinyur Alat Berat & Copywriter Ahli. Ekstrak data berikut dari spesifikasi.
-                Jika data spesifik tidak ada, buat tebakan pintar berdasarkan konteks industri (misal bobot dikira-kira, atau tulis "-").
+                Anda adalah Data Extractor & Copywriter Alat Berat profesional.
+                TUGAS UTAMA: Ekstrak fakta HANYA dari "Data Spesifikasi Mentah" yang diberikan di bawah.
+                
+                ATURAN KERAS (STRICT RULES):
+                1. DILARANG KERAS MENGARANG/MENEBAK! Jika spesifikasi tidak disebutkan sama sekali di teks mentah, tulis "TIDAK ADA DATA".
+                2. Dilarang membeo teks placeholder. Deskripsikan fitur secara nyata berdasarkan teks.
                 
                 KEMBALIKAN OUTPUT STRICT DALAM FORMAT JSON BERIKUT:
                 {{
-                  "tipe_unit": "Nama model/unit utama (misal: JP60-8 Excavator)",
-                  "headline": "1 Kalimat marketing bombastis (maks 5 kata)",
-                  "engine": "Nama Mesin / Power (misal: Cummins)",
-                  "hydraulic": "Tipe Hidrolik",
-                  "bobot": "Berat operasional (misal: 6 Ton)",
-                  "badge1": "Keunggulan 1 singkat (misal: GARANSI MESIN)",
-                  "badge2": "Keunggulan 2 singkat (misal: MUDAH PERAWATAN)",
-                  "badge3": "Keunggulan 3 singkat (misal: IRIT BBM)",
+                  "tipe_unit": "Nama model/unit utama (Cari di teks mentah)",
+                  "headline": "1 Kalimat marketing bombastis berdasarkan spesifikasi asli",
+                  "engine": "Nama Mesin / Power (Hanya jika ada di teks)",
+                  "hydraulic": "Tipe Hidrolik (Hanya jika ada di teks)",
+                  "bobot": "Berat operasional (Hanya jika ada di teks)",
+                  "badge1": "Keunggulan 1",
+                  "badge2": "Keunggulan 2",
+                  "badge3": "Keunggulan 3",
                   "copywriting": [
-                    {{"judul": "FITUR 1", "deskripsi": "Penjelasan fitur maksimal 3 kalimat."}},
-                    {{"judul": "FITUR 2", "deskripsi": "Penjelasan fitur maksimal 3 kalimat."}},
-                    {{"judul": "FITUR 3", "deskripsi": "Penjelasan fitur maksimal 3 kalimat."}},
-                    {{"judul": "FITUR 4", "deskripsi": "Penjelasan fitur maksimal 3 kalimat."}}
+                    {{"judul": "JUDUL FITUR 1", "deskripsi": "Penjelasan detail fitur berdasarkan teks."}},
+                    {{"judul": "JUDUL FITUR 2", "deskripsi": "Penjelasan detail fitur berdasarkan teks."}},
+                    {{"judul": "JUDUL FITUR 3", "deskripsi": "Penjelasan detail fitur berdasarkan teks."}},
+                    {{"judul": "JUDUL FITUR 4", "deskripsi": "Penjelasan detail fitur berdasarkan teks."}}
                   ]
                 }}
                 
