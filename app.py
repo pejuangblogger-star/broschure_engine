@@ -334,30 +334,27 @@ if st.button("🌟 RENDER ULTIMATE BROCHURE", use_container_width=True, type="pr
                         pdf.multi_cell(0, 5, deskripsi.strip())
                         pdf.ln(3)
 
-                # 7. FOOTER WA (DIJAMIN SEJAJAR 1 BARIS TANPA PINDAH HALAMAN)
-                # Ambil posisi Y terakhir dari teks AI, beri jarak 8 point ke bawah
-                safe_y = pdf.get_y() + 8 
-                
-                # Kunci koordinat ke posisi tersebut
-                pdf.set_xy(10, safe_y)
+               # 7. FOOTER WA (KOORDINAT TETAP DI ATAS GARIS BAWAH)
+                # Garis footer berada di Y = 272. Kita pasang teks di Y = 262 (10mm di atas garis).
+                # Ini mengabaikan posisi Y dari teks AI di atasnya, sehingga selalu konsisten di bawah.
+                pdf.set_y(262) 
                 
                 # --- KOMPONEN KIRI: Teks "Hubungi Sales" ---
                 teks_sales = "HUBUNGI SALES KAMI: "
                 pdf.set_font('helvetica', 'B', 12)
                 pdf.set_text_color(20, 20, 20)
-                
-                # Kalkulasi lebar teks agar presisi
                 lebar_prefix = pdf.get_string_width(teks_sales)
                 
-                # KUNCI UTAMA: ln=0 (Menahan posisi FPDF agar tidak tekan "Enter" ke bawah)
+                # Set posisi X ke 10, cetak teks kiri, dan tahan di baris yang sama (ln=0)
+                pdf.set_x(10)
                 pdf.cell(lebar_prefix, 8, teks_sales, ln=0) 
                 
-                # --- KOMPONEN KANAN: Nomor WA (Klikable & Sejajar) ---
+                # --- KOMPONEN KANAN: Nomor WA (Klikable) ---
                 pdf.set_font('helvetica', 'B', 16)
                 pdf.set_text_color(*b_color)
                 wa_clean = ''.join(filter(str.isdigit, wa_num))
                 
-                # ln=1 (Menutup baris)
+                # Cetak nomor WA dan tutup baris (ln=1)
                 pdf.cell(0, 8, f"WhatsApp: +{wa_clean}", link=f"https://wa.me/{wa_clean}", ln=1)
 
                 # --- EXPORT ---
