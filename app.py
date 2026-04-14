@@ -17,10 +17,10 @@ st.set_page_config(page_title="Ultimate Pro Brochure Engine", layout="wide", pag
 CATALOG_DIR = "katalog_tersimpan"
 os.makedirs(CATALOG_DIR, exist_ok=True)
 
-# --- CACHING ENGINE (HEMAT RESOURCE & API) ---
-@st.cache_data(show_spinner=False, ttl=3600)
+# --- EKSTRAKTOR DATA (CACHE DIHAPUS AGAR SELALU BACA DATA FRESH) ---
 def extract_source_data(url, pdf_path):
     scraped_text = ""
+    
     if url:
         try:
             headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
@@ -38,11 +38,19 @@ def extract_source_data(url, pdf_path):
                 pdf_reader = pypdf.PdfReader(file_pdf)
                 scraped_text += "DATA KATALOG PDF:\n"
                 num_pages = min(8, len(pdf_reader.pages))
+                
+                teks_halaman = ""
                 for i in range(num_pages):
                     text = pdf_reader.pages[i].extract_text()
-                    if text: scraped_text += text + "\n"
+                    if text: teks_halaman += text + "\n"
+                
+                # SENSOR SCANNED PDF: Jika teks yang terekstrak kurang dari 50 huruf
+                if len(teks_halaman.strip()) < 50:
+                    st.warning("⚠️ PERINGATAN: Teks di dalam PDF tidak terdeteksi. Jika PDF ini berupa Gambar/Hasil Scan, mesin tidak akan bisa membacanya. Mohon ketik manual spesifikasi di web atau gunakan PDF berbasis teks.")
+                
+                scraped_text += teks_halaman
         except Exception as e:
-            pass
+            st.error(f"Gagal membaca PDF: {e}")
             
     return scraped_text[:10000]
 
